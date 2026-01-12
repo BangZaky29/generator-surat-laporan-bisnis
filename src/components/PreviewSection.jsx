@@ -17,7 +17,7 @@ export default function PreviewSection({ activeTab, formData, isMobile }) {
       <div
         className="preview-document"
         style={{
-          width: isMobile ? '100mm' : '210mm',
+          width: isMobile ? '90mm' : '210mm',
           minHeight: isMobile ? 'auto' : '297mm',
 
           /* ✅ MOBILE TETAP */
