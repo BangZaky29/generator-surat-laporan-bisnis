@@ -25,6 +25,7 @@ export const generatePDF = async (formData, activeTab) => {
   `
   element.appendChild(header)
 
+
   // Title
   const title = document.createElement('h1')
   title.style.textAlign = 'center'
@@ -40,14 +41,12 @@ export const generatePDF = async (formData, activeTab) => {
   infoDiv.style.display = 'flex'
   infoDiv.style.justifyContent = 'space-between'
   infoDiv.style.marginBottom = '20px'
+  const period = formData.reportPeriod?.trim() || '—'
   infoDiv.innerHTML = `
-    <div>
-      <div>Periode: -</div>
-    </div>
-    <div>
-      <div style="text-align: right;">Tanggal Cetak: ${formatDate(formData.reportDate)}</div>
-    </div>
-  `
+  <div>
+    <div><strong>Periode:</strong> ${period}</div>
+  </div>
+`
   element.appendChild(infoDiv)
 
   // Table
@@ -57,18 +56,27 @@ export const generatePDF = async (formData, activeTab) => {
   // Signature
   const signature = document.createElement('div')
   signature.style.marginTop = '30px'
-  signature.style.textAlign = 'right'
-  signature.style.width = '150px'
+  signature.style.textAlign = 'center'
+  signature.style.width = '200px'
   signature.style.marginLeft = 'auto'
   signature.innerHTML = `
-    <div style="margin-bottom: 5px; font-size: 11pt;">${formatDate(formData.reportDate)}</div>
-    <div style="margin-bottom: 30px; font-size: 11pt;">(${formData.personResponsible})</div>
-    <div style="font-weight: bold; font-size: 11pt; margin-bottom: 5px;">
-      ${formData.personResponsible}
+    <div style="margin-bottom: 8px; font-size: 11pt;">
+      ${(formData.city || 'Contoh: Bogor')}, ${formatDate(formData.reportDate || new Date())}
     </div>
-    <div style="font-size: 10pt; color: #666;">Penanggung Jawab</div>
+
+    <div style="margin-bottom: 100px; font-size: 10pt; color: #999;">
+    </div>
+
+    <div style="font-weight: bold; font-size: 11pt; margin-bottom: 4px;">
+      ${formData.personResponsible || 'Nama Penanggung Jawab'}
+    </div>
+
+    <div style="font-size: 10pt; color: #666;">
+      Penanggung Jawab
+    </div>
   `
   element.appendChild(signature)
+
 
   // Footer
   const footer = document.createElement('div')

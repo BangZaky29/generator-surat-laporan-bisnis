@@ -46,14 +46,13 @@ export default function MainContent({
       {/* ================= PREVIEW ================= */}
       {!isFormView && (
         <div
-          className={`min-h-0  ${
+          className={`min-h-0 ${
             isMobile
-              ? 'w-full bg-light-gray overflow-y-auto flex justify-center'
+              ? 'w-full bg-light-gray overflow-y-auto'
               : 'w-1/2 bg-light-gray overflow-y-auto flex justify-center'
           }`}
         >
-          {/* Preview container biar selalu center */}
-          <div className="w-full flex justify-center py-6 items-start">
+          <div className={`${isMobile ? 'w-full' : 'w-full flex justify-center'} py-4`}>
             <PreviewSection
               activeTab={activeTab}
               formData={formData}
@@ -62,6 +61,7 @@ export default function MainContent({
           </div>
         </div>
       )}
+
     </div>
   )
 }

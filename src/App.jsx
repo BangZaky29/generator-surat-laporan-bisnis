@@ -8,12 +8,14 @@ import ActionBar from './components/ActionBar'
 import MobileTabNavigation from './components/MobileTabNavigation'
 
 function App() {
+  const today = new Date().toISOString().split('T')[0]
   const [activeTab, setActiveTab] = useState('daily')
   const [formData, setFormData] = useState({
-    companyName: 'PT. Maju Jaya Abadi',
-    reportPeriod: 'Januari 2024',
-    reportDate: '2026-01-11',
-    personResponsible: 'Nama lengkap penanggung jawab',
+    companyName: 'PT. Berkah Sejahtera',
+    reportPeriod: 'January 2026',
+    reportDate: today, 
+    personResponsible: '',
+    city: 'Kabupaten Bogor',     
     dailySales: [
       { day: 'Senin', revenue: 0, transactions: 0 },
       { day: 'Selasa', revenue: 0, transactions: 0 },
@@ -96,10 +98,11 @@ function App() {
 
   const resetForm = () => {
     setFormData({
-      companyName: 'PT. Maju Jaya Abadi',
-      reportPeriod: 'Januari 2024',
-      reportDate: '2026-01-11',
-      personResponsible: 'Nama lengkap penanggung jawab',
+      companyName: '',
+      reportPeriod: '',
+      reportDate: today, 
+      personResponsible: '',
+      city: 'Kabupaten Bogor',     
       dailySales: [
         { day: 'Senin', revenue: 0, transactions: 0 },
         { day: 'Selasa', revenue: 0, transactions: 0 },
@@ -161,9 +164,18 @@ function App() {
             <MainContent
               activeTab={activeTab}
               formData={formData}
+              onFormChange={handleFormChange}
+              onDailySalesChange={handleDailySalesChange}
+              onMonthlySalesChange={handleMonthlySalesChange}
+              onMaterialChange={handleMaterialChange}
+              onAddMaterialRow={addMaterialRow}
+              onRemoveMaterialRow={removeMaterialRow}
               isMobile={true}
+              isFormView={false}
               isPreviewOnly={true}
-            />
+          />
+
+
           )}
         </div>
       </>

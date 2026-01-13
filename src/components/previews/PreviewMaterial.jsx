@@ -23,12 +23,7 @@ export default function PreviewMaterial({ formData }) {
         <div>
           <span>Periode:</span>
           <br />
-          <span>-</span>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <span>Tanggal Cetak:</span>
-          <br />
-          <span>{formatDate(formData.reportDate)}</span>
+          <span>{formData.reportPeriod?.trim() || '-'}</span>
         </div>
       </div>
 
@@ -65,10 +60,9 @@ export default function PreviewMaterial({ formData }) {
       </table>
 
       {/* Signature Area */}
-      <div className="preview-signature-area">
+       <div className="preview-signature-area">
         <div className="preview-signature-block">
-          <p style={{ marginBottom: '2mm', fontSize: '11pt' }}>{formatDate(formData.reportDate)}</p>
-          <p style={{ marginBottom: '8mm', fontSize: '11pt' }}>({formData.personResponsible})</p>
+          <div className="preview-signature-line">{`${formData.city}, ${formatDate(formData.reportDate)}`}</div>  
           <div className="preview-signature-name">{formData.personResponsible}</div>
           <div className="preview-signature-title">Penanggung Jawab</div>
         </div>

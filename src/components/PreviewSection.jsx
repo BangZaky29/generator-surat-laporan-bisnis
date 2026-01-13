@@ -8,31 +8,28 @@ export default function PreviewSection({ activeTab, formData, isMobile }) {
   return (
     <div
       className={`w-full flex justify-center ${
-        isMobile ? 'items-center h-full' : 'items-start'
+        isMobile ? 'items-start' : 'items-start'
       }`}
       style={{
-        padding: isMobile ? '12px' : '24px',
+        padding: isMobile ? '8px' : '24px',
       }}
     >
       <div
         className="preview-document"
         style={{
-          width: isMobile ? '90mm' : '210mm',
-          minHeight: isMobile ? 'auto' : '297mm',
-
-          /* ✅ MOBILE TETAP */
-          zoom: isMobile ? 0.76 : 1,
-
-          /* ❌ WEB: jangan vertical center */
+          width: isMobile ? '135mm' : '210mm',
+          height: isMobile ? 'auto' : 'auto',
+          maxWidth: isMobile ? '100rem ' : '210mm',
+          // minHeight: isMobile ? '63rem' : '297mm',
+          zoom: isMobile ? '0.5' : '1',
           transformOrigin: 'top center',
         }}
       >
-        <div className="w-full">
-          {activeTab === 'daily' && <PreviewDaily formData={formData} />}
-          {activeTab === 'monthly' && <PreviewMonthly formData={formData} />}
-          {activeTab === 'material' && <PreviewMaterial formData={formData} />}
-        </div>
+        {activeTab === 'daily' && <PreviewDaily formData={formData} />}
+        {activeTab === 'monthly' && <PreviewMonthly formData={formData} />}
+        {activeTab === 'material' && <PreviewMaterial formData={formData} />}
       </div>
     </div>
   )
 }
+

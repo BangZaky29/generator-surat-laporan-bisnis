@@ -85,19 +85,6 @@ export default function FormSection({
               />
             </div>
 
-            {/* Report Date */}
-            <div>
-              <label className={`block ${labelSize} font-medium text-gray-700 mb-1`}>
-                Tanggal Cetak
-              </label>
-              <input
-                type="date"
-                value={formData.reportDate}
-                onChange={(e) => onFormChange('reportDate', e.target.value)}
-                className={`w-full border border-border-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-soft-blue ${inputSize}`}
-              />
-            </div>
-
             {/* Person Responsible */}
             <div>
               <label className={`block ${labelSize} font-medium text-gray-700 mb-1`}>
@@ -107,7 +94,32 @@ export default function FormSection({
                 type="text"
                 value={formData.personResponsible}
                 onChange={(e) => onFormChange('personResponsible', e.target.value)}
-                placeholder="Nama lengkap penanggung jawab"
+                placeholder="Contoh: Budi Santoso"
+                className={`w-full border border-border-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-soft-blue ${inputSize}`}
+              />
+            </div>
+            {/* Daerah */}
+            <div>
+              <label className={`block ${labelSize} font-medium text-gray-700 mb-1`}>
+                Daerah
+              </label>
+              <input
+                type="text"
+                value={formData.city}
+                onChange={(e) => onFormChange('city', e.target.value)}
+                placeholder="Contoh: Bogor"
+                className={`w-full border border-border-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-soft-blue ${inputSize}`}
+              />
+            </div>
+            {/* Tanggal */}
+            <div>
+              <label className={`block ${labelSize} font-medium text-gray-700 mb-1`}>
+                Tanggal dibuat
+              </label>
+              <input
+                type="date"
+                value={formData.reportDate}
+                onChange={(e) => onFormChange('reportDate', e.target.value)}
                 className={`w-full border border-border-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-soft-blue ${inputSize}`}
               />
             </div>
@@ -146,7 +158,7 @@ export default function FormSection({
                       <div>
                         <input
                           type="number"
-                          value={item.revenue}
+                          value={item.revenue === 0 ? '' : item.revenue}
                           onChange={(e) => onDailySalesChange(idx, 'revenue', e.target.value)}
                           placeholder="0"
                           className={`w-full border border-border-gray rounded text-xs py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-soft-blue`}
@@ -155,7 +167,7 @@ export default function FormSection({
                       <div>
                         <input
                           type="number"
-                          value={item.transactions}
+                          value={item.transactions === 0 ? '' : item.transactions}
                           onChange={(e) => onDailySalesChange(idx, 'transactions', e.target.value)}
                           placeholder="0"
                           className={`w-full border border-border-gray rounded text-xs py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-soft-blue`}
@@ -178,7 +190,7 @@ export default function FormSection({
                       </label>
                       <input
                         type="number"
-                        value={item.total}
+                        value={item.total === 0 ? '' : item.total}
                         onChange={(e) => onMonthlySalesChange(idx, 'total', e.target.value)}
                         placeholder="0"
                         className={`w-full border border-border-gray rounded-lg text-xs py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-soft-blue`}
@@ -209,7 +221,7 @@ export default function FormSection({
                         <div className="flex-1">
                           <input
                             type="text"
-                            value={item.name}
+                            value={item.name === 0 ? '' : item.name}
                             onChange={(e) => onMaterialChange(idx, 'name', e.target.value)}
                             placeholder="Bahan"
                             className={`w-full border border-border-gray rounded text-xs py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-soft-blue`}
@@ -218,7 +230,7 @@ export default function FormSection({
                         <div className="w-16">
                           <input
                             type="number"
-                            value={item.quantity}
+                            value={item.quantity === 0 ? '' : item.quantity}
                             onChange={(e) => onMaterialChange(idx, 'quantity', e.target.value)}
                             placeholder="Qty"
                             className={`w-full border border-border-gray rounded text-xs py-1.5 px-1 focus:outline-none focus:ring-2 focus:ring-soft-blue`}
@@ -227,7 +239,7 @@ export default function FormSection({
                         <div className="w-20">
                           <input
                             type="number"
-                            value={item.unitPrice}
+                            value={item.unitPrice === 0 ? '' : item.unitPrice}
                             onChange={(e) => onMaterialChange(idx, 'unitPrice', e.target.value)}
                             placeholder="Harga"
                             className={`w-full border border-border-gray rounded text-xs py-1.5 px-1 focus:outline-none focus:ring-2 focus:ring-soft-blue`}

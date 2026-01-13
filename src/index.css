@@ -146,6 +146,10 @@ body {
   font-size: 11pt;
 }
 
+.preview-signature-line {
+  margin-bottom: 20mm;
+}
+
 .preview-signature-area {
   margin-top: 15mm;
   display: flex;
