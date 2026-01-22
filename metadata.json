@@ -1,0 +1,5 @@
+{
+  "name": "FinMaster - Generator Laporan Keuangan",
+  "description": "Aplikasi generator laporan keuangan bisnis (Jasa, Dagang, Manufaktur) dengan UI ramah pengguna dan ekspor PDF.",
+  "requestFramePermissions": []
+}

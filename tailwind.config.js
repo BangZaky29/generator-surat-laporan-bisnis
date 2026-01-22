@@ -1,26 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,jsx}",
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
       colors: {
-        'soft-blue': '#4F63DB',
-        'soft-blue-50': '#F0F4FF',
-        'soft-blue-100': '#E0E8FF',
-        'light-gray': '#F5F7FA',
-        'border-gray': '#E8EAED',
+        primary: '#4f46e5',   // Indigo 600
+        secondary: '#10b981', // Emerald 500
+        surface: '#f8fafc',   // Slate 50
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
-      spacing: {
-        'a4-width': '210mm',
-        'a4-height': '297mm',
-      },
     },
   },
   plugins: [],
-}
+};
