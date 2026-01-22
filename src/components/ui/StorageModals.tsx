@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, FileText, Trash2, Clock, Upload, AlertTriangle, CheckCircle, Info } from 'lucide-react';
-import { SavedFile } from '../../types';
+import { X, Save, FileText, Trash2, Clock, Upload, AlertTriangle, CheckCircle, Info, Sparkles, Briefcase, ShoppingBag, Factory } from 'lucide-react';
+import { SavedFile, CompanyType } from '../../types';
 import { Button, Input } from './Input';
 import { getSavedFiles, deleteFile } from '../../utils/storage';
 
@@ -73,6 +73,58 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   );
 };
 
+// --- SEEDER MODAL ---
+interface SeederModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (type: CompanyType) => void;
+}
+
+export const SeederModal: React.FC<SeederModalProps> = ({ isOpen, onClose, onSelect }) => {
+  if (!isOpen) return null;
+
+  const options = [
+    { type: 'jasa', label: 'Perusahaan Jasa', icon: Briefcase, color: 'text-indigo-600 bg-indigo-50 border-indigo-200 hover:bg-indigo-100' },
+    { type: 'dagang', label: 'Perusahaan Dagang', icon: ShoppingBag, color: 'text-emerald-600 bg-emerald-50 border-emerald-200 hover:bg-emerald-100' },
+    { type: 'manufaktur', label: 'Perusahaan Manufaktur', icon: Factory, color: 'text-orange-600 bg-orange-50 border-orange-200 hover:bg-orange-100' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }} 
+        animate={{ scale: 1, opacity: 1 }}
+        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden relative z-10"
+      >
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-purple-50">
+          <h3 className="font-bold text-purple-900 flex items-center gap-2">
+            <Sparkles size={18} /> Pilih Data Dummy
+          </h3>
+          <button onClick={onClose}><X size={20} className="text-slate-400 hover:text-slate-600" /></button>
+        </div>
+        <div className="p-6">
+          <p className="text-sm text-slate-500 mb-4">Pilih jenis bisnis untuk mengisi formulir dengan data contoh secara otomatis.</p>
+          <div className="space-y-3">
+            {options.map((opt) => (
+              <button
+                key={opt.type}
+                onClick={() => onSelect(opt.type as CompanyType)}
+                className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${opt.color} hover:shadow-md text-left bg-white`}
+              >
+                <div className="bg-white/80 p-2 rounded-lg shadow-sm">
+                   <opt.icon size={24} />
+                </div>
+                <span className="font-bold text-slate-800">{opt.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
 // --- SAVE MODAL ---
 interface SaveModalProps {
   isOpen: boolean;
@@ -137,17 +189,24 @@ interface LoadModalProps {
 
 export const LoadModal: React.FC<LoadModalProps> = ({ isOpen, onClose, onLoad }) => {
   const [files, setFiles] = useState<SavedFile[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setFiles(getSavedFiles());
+      setDeletingId(null);
     }
   }, [isOpen]);
 
-  const handleDelete = (id: string) => {
-    if (confirm('Hapus file ini dari riwayat?')) {
-      const updated = deleteFile(id);
+  const requestDelete = (id: string) => {
+    setDeletingId(id);
+  };
+
+  const confirmDelete = () => {
+    if (deletingId) {
+      const updated = deleteFile(deletingId);
       setFiles(updated);
+      setDeletingId(null);
     }
   };
 
@@ -168,7 +227,7 @@ export const LoadModal: React.FC<LoadModalProps> = ({ isOpen, onClose, onLoad })
           <button onClick={onClose}><X size={20} className="text-slate-400 hover:text-slate-600" /></button>
         </div>
         
-        <div className="p-4 overflow-y-auto flex-1 bg-slate-50">
+        <div className="p-4 overflow-y-auto flex-1 bg-slate-50 relative">
           {files.length === 0 ? (
             <div className="text-center py-10 text-slate-400">
               <FileText size={48} className="mx-auto mb-2 opacity-20" />
@@ -196,7 +255,7 @@ export const LoadModal: React.FC<LoadModalProps> = ({ isOpen, onClose, onLoad })
                       <Upload size={18} />
                     </button>
                     <button 
-                      onClick={() => handleDelete(file.id)}
+                      onClick={() => requestDelete(file.id)}
                       className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
                       title="Hapus"
                     >
@@ -207,6 +266,34 @@ export const LoadModal: React.FC<LoadModalProps> = ({ isOpen, onClose, onLoad })
               ))}
             </div>
           )}
+
+          {/* INTERNAL DELETE CONFIRMATION OVERLAY */}
+          <AnimatePresence>
+            {deletingId && (
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-20 bg-white/95 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center"
+              >
+                <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                  <Trash2 size={24} />
+                </div>
+                <h4 className="font-bold text-slate-800 text-lg mb-2">Hapus File Ini?</h4>
+                <p className="text-sm text-slate-500 mb-6 max-w-xs mx-auto">
+                  Data yang dihapus tidak dapat dikembalikan lagi. Anda yakin?
+                </p>
+                <div className="flex gap-3 w-full max-w-xs mx-auto">
+                  <Button variant="outline" className="flex-1 border-slate-300" onClick={() => setDeletingId(null)}>
+                    Batal
+                  </Button>
+                  <Button className="flex-1 bg-red-600 hover:bg-red-700 text-white shadow-red-200" onClick={confirmDelete}>
+                    Ya, Hapus
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
     </div>

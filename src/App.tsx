@@ -9,7 +9,7 @@ import { DashboardLayout } from './components/layout/DashboardLayout';
 import { ReportData, Step, CompanyType, SavedFile } from './types';
 import { generateDummyData } from './utils/seeder';
 import { saveFile } from './utils/storage';
-import { SaveModal, LoadModal, AlertModal } from './components/ui/StorageModals';
+import { SaveModal, LoadModal, AlertModal, SeederModal } from './components/ui/StorageModals';
 
 // Function to return fresh initial state
 const getInitialData = (): ReportData => ({
@@ -50,6 +50,7 @@ function App() {
   // Modal States
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
+  const [isSeederModalOpen, setIsSeederModalOpen] = useState(false);
   
   // Generic Alert/Confirm State
   const [alertConfig, setAlertConfig] = useState<{
@@ -116,38 +117,23 @@ function App() {
   };
 
   const handleSeeder = () => {
-    // FIX: If user is on step 1 (Type Selection), force them to select a type first.
-    if (currentStep === 'type-selection') {
-      setAlertConfig({
-        isOpen: true,
-        type: 'info',
-        title: 'Pilih Jenis Bisnis',
-        message: 'Mohon pilih Jenis Bisnis (Jasa, Dagang, atau Manufaktur) terlebih dahulu di layar utama agar data dummy yang dibuat sesuai dengan format yang Anda butuhkan.',
-        confirmText: 'Mengerti',
-        singleButton: true,
-        onConfirm: () => closeAlert()
-      });
-      return;
-    }
+    setIsSeederModalOpen(true);
+  };
 
-    // Logic for steps > 1
-    const targetType = data.type;
+  const performSeeder = (type: CompanyType) => {
+    setIsSeederModalOpen(false);
+    const dummy = generateDummyData(type);
+    setData(dummy);
+    setCompletedSteps(['type-selection', 'company-info', 'data-entry']);
+    setCurrentStep('preview');
+    
     setAlertConfig({
       isOpen: true,
-      type: 'warning',
-      title: 'Isi Data Dummy Otomatis?',
-      message: `Sistem akan mengisi formulir dengan data contoh untuk perusahaan ${targetType.toUpperCase()}. Data yang sudah Anda ketik saat ini akan tertimpa. Lanjutkan?`,
-      confirmText: 'Isi Data Dummy',
-      onConfirm: () => {
-        const dummy = generateDummyData(targetType);
-        setData(dummy);
-        
-        // Update completion status
-        setCompletedSteps(['type-selection', 'company-info', 'data-entry']);
-        
-        // Navigate to Preview so user sees the result immediately
-        setCurrentStep('preview');
-      }
+      type: 'info',
+      title: 'Data Dummy Berhasil Diisi',
+      message: `Aplikasi telah diisi dengan data contoh untuk ${type.toUpperCase()}. Silakan cek hasilnya di halaman Preview.`,
+      singleButton: true,
+      confirmText: 'Oke'
     });
   };
 
@@ -170,7 +156,15 @@ function App() {
         confirmText: 'Oke'
       });
     } else {
-      alert('Gagal menyimpan data.');
+      setIsSaveModalOpen(false);
+      setAlertConfig({
+        isOpen: true,
+        type: 'danger',
+        title: 'Gagal Menyimpan',
+        message: 'Terjadi kesalahan saat menyimpan data. Pastikan memori browser tidak penuh.',
+        singleButton: true,
+        confirmText: 'Tutup'
+      });
     }
   };
 
@@ -261,6 +255,12 @@ function App() {
         isOpen={isLoadModalOpen} 
         onClose={() => setIsLoadModalOpen(false)} 
         onLoad={performLoad} 
+      />
+
+      <SeederModal 
+        isOpen={isSeederModalOpen}
+        onClose={() => setIsSeederModalOpen(false)}
+        onSelect={performSeeder}
       />
 
       <AlertModal 
