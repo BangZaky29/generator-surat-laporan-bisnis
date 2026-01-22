@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Briefcase, Building2, FileBarChart, PieChart, Menu, Settings, Hexagon } from 'lucide-react';
 import { Step } from '../../types';
@@ -27,10 +28,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   // NOTE: Changed 'md' to 'lg' breakpoints to handle Tablet Portrait (Vertical) as Mobile view
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-50 print:bg-white">
       
       {/* Desktop/Landscape Tablet Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 fixed h-full z-30">
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 fixed h-full z-30 print:hidden">
         <div className="p-6 border-b border-slate-100 flex items-center gap-2">
           <div className="bg-indigo-600 text-white p-1.5 rounded-lg font-bold text-lg">FM</div>
           <h1 className="font-bold text-xl tracking-tight text-slate-800">FinMaster</h1>
@@ -82,7 +83,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </aside>
 
       {/* Mobile/Portrait Tablet Topbar */}
-      <div className="lg:hidden bg-white border-b border-slate-200 p-4 sticky top-0 z-40 flex items-center justify-between shadow-sm">
+      <div className="lg:hidden bg-white border-b border-slate-200 p-4 sticky top-0 z-40 flex items-center justify-between shadow-sm print:hidden">
         <div className="flex items-center gap-2">
           <div className="bg-indigo-600 text-white p-1 rounded font-bold">FM</div>
           <h1 className="font-bold text-lg text-slate-800">FinMaster</h1>
@@ -93,14 +94,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 p-4 lg:p-8 pb-32 lg:pb-8 overflow-y-auto min-h-screen">
-        <div className="max-w-5xl mx-auto h-full">
+      <main className="flex-1 lg:ml-64 p-4 lg:p-8 pb-32 lg:pb-8 overflow-y-auto min-h-screen print:ml-0 print:p-0 print:pb-0 print:h-auto">
+        <div className="max-w-5xl mx-auto h-full print:max-w-none print:h-auto">
           {children}
         </div>
       </main>
 
       {/* Mobile/Portrait Tablet Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 grid grid-cols-5 p-2 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <nav className="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 grid grid-cols-5 p-2 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] print:hidden">
          
          {/* Left Side */}
          <NavButton step="type-selection" current={currentStep} icon={Briefcase} label="Bisnis" onChange={onStepChange} canNav={canNavigate} />

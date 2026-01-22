@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ReportData } from '../../types';
 import { calculateFinance } from '../../utils/calculations';
@@ -78,6 +79,8 @@ export const ReportPreview: React.FC<Props> = ({ data, onBack, onReset }) => {
   const handleDownload = async () => {
     try {
       setDownloadStatus('loading');
+      // Scroll to top to ensure html2canvas captures correctly
+      window.scrollTo(0, 0);
       await exportToPDF('report-content', `Laporan_${data.type}_${data.companyName.replace(/\s+/g, '_')}_${data.period}`);
       setDownloadStatus('success');
       setTimeout(() => setDownloadStatus('idle'), 3000);
@@ -103,6 +106,66 @@ export const ReportPreview: React.FC<Props> = ({ data, onBack, onReset }) => {
   return (
     <div className="space-y-6 pb-20 lg:pb-0" ref={containerRef}>
       
+      {/* Print Styles */}
+      <style>{`
+        @media print {
+          @page { 
+            size: A4; 
+            margin: 0; /* Let report content padding handle margins */
+          }
+          
+          html, body { 
+            background-color: white;
+            visibility: hidden;
+            height: auto !important;
+            overflow: visible !important;
+            position: static !important;
+          }
+          
+          /* Hide all decorative elements */
+          .no-print, nav, aside, button, .print\\:hidden {
+            display: none !important;
+          }
+
+          /* Force all parents to be visible and allow flow */
+          #root, main, .report-scale-wrapper, div {
+             overflow: visible !important;
+          }
+
+          /* Specifically target the report content */
+          #report-content {
+            visibility: visible;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 210mm !important;
+            /* Height auto is CRITICAL for pagination */
+            height: auto !important; 
+            min-height: 297mm;
+            margin: 0 !important;
+            padding: 20mm !important;
+            box-shadow: none !important;
+            z-index: 9999;
+            background: white !important;
+            overflow: visible !important;
+            display: block !important;
+          }
+
+          /* Ensure children are visible */
+          #report-content * {
+            visibility: visible;
+          }
+          
+          /* Reset transforms that might be applied by the scaler */
+          .report-scale-wrapper {
+             transform: none !important;
+             margin: 0 !important;
+             padding: 0 !important;
+             display: block !important;
+          }
+        }
+      `}</style>
+
       {/* Dashboard Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 print:hidden">
         <div>
@@ -163,21 +226,21 @@ export const ReportPreview: React.FC<Props> = ({ data, onBack, onReset }) => {
 
       {/* A4 PREVIEW CONTAINER */}
       {/* Using dynamic transform: scale to perfectly fit mobile screens without clipping */}
-      <div className="bg-slate-200/50 p-2 lg:p-8 rounded-xl overflow-hidden flex justify-center border border-slate-200 print:bg-white print:p-0 print:border-none print:block">
+      <div className="bg-slate-200/50 p-2 lg:p-8 rounded-xl overflow-hidden flex justify-center border border-slate-200 print:bg-white print:p-0 print:border-none print:block print:overflow-visible">
         
         <div 
+          className="report-scale-wrapper transition-transform duration-200 ease-out print:transform-none print:w-full print:block"
           style={{ 
             transform: `scale(${scale})`, 
             transformOrigin: 'top center',
             marginBottom: `-${(1 - scale) * 100}%` // Fix layout gap caused by scaling
           }}
-          className="transition-transform duration-200 ease-out print:transform-none"
         >
           {/* A4 PAPER */}
           {/* min-h-[297mm] allows infinite growth for pagination. No strict height. */}
           <div 
             id="report-content"
-            className="w-[210mm] min-h-[297mm] bg-white shadow-xl p-[20mm] text-slate-900 relative flex flex-col print:shadow-none print:w-full print:p-0"
+            className="w-[210mm] min-h-[297mm] bg-white shadow-xl p-[20mm] text-slate-900 relative flex flex-col print:shadow-none print:w-full print:p-[20mm] print:relative"
           >
             
             {/* CONTENT TOP */}
