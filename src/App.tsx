@@ -10,6 +10,7 @@ import { ReportData, Step, CompanyType, SavedFile } from './types';
 import { generateDummyData } from './utils/seeder';
 import { saveFile } from './utils/storage';
 import { SaveModal, LoadModal, AlertModal, SeederModal } from './components/ui/StorageModals';
+import SubscriptionGuard from './components/SubscriptionGuard';
 
 // Function to return fresh initial state
 const getInitialData = (): ReportData => ({
@@ -46,12 +47,12 @@ function App() {
   const [currentStep, setCurrentStep] = useState<Step>('type-selection');
   const [data, setData] = useState<ReportData>(getInitialData());
   const [completedSteps, setCompletedSteps] = useState<Step[]>([]);
-  
+
   // Modal States
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isSeederModalOpen, setIsSeederModalOpen] = useState(false);
-  
+
   // Generic Alert/Confirm State
   const [alertConfig, setAlertConfig] = useState<{
     isOpen: boolean;
@@ -126,7 +127,7 @@ function App() {
     setData(dummy);
     setCompletedSteps(['type-selection', 'company-info', 'data-entry']);
     setCurrentStep('preview');
-    
+
     setAlertConfig({
       isOpen: true,
       type: 'info',
@@ -191,89 +192,91 @@ function App() {
   };
 
   return (
-    <>
-      <DashboardLayout 
-        currentStep={currentStep} 
-        onStepChange={setCurrentStep}
-        canNavigate={canNavigateTo}
-        onReset={handleReset}
-        onSave={handleSaveRequest}
-        onLoad={handleLoadRequest}
-        onSeeder={handleSeeder}
-      >
-        <AnimatePresence mode="wait">
-          
-          {currentStep === 'type-selection' && (
-            <StepTransition key="step1">
-              <CompanyTypeSelection onSelect={handleTypeSelect} />
-            </StepTransition>
-          )}
+    <SubscriptionGuard featureSlug="laporan-bisnis">
+      <>
+        <DashboardLayout
+          currentStep={currentStep}
+          onStepChange={setCurrentStep}
+          canNavigate={canNavigateTo}
+          onReset={handleReset}
+          onSave={handleSaveRequest}
+          onLoad={handleLoadRequest}
+          onSeeder={handleSeeder}
+        >
+          <AnimatePresence mode="wait">
 
-          {currentStep === 'company-info' && (
-            <StepTransition key="step2">
-              <CompanyInfo 
-                data={data} 
-                onUpdate={updateData} 
-                onNext={() => handleNextStep('company-info', 'data-entry')}
-                onReset={() => {}} 
-              />
-            </StepTransition>
-          )}
+            {currentStep === 'type-selection' && (
+              <StepTransition key="step1">
+                <CompanyTypeSelection onSelect={handleTypeSelect} />
+              </StepTransition>
+            )}
 
-          {currentStep === 'data-entry' && (
-            <StepTransition key="step3">
-              <DataEntry 
-                data={data} 
-                onUpdate={updateData} 
-                onNext={() => handleNextStep('data-entry', 'preview')}
-                onBack={() => setCurrentStep('company-info')} 
-              />
-            </StepTransition>
-          )}
+            {currentStep === 'company-info' && (
+              <StepTransition key="step2">
+                <CompanyInfo
+                  data={data}
+                  onUpdate={updateData}
+                  onNext={() => handleNextStep('company-info', 'data-entry')}
+                  onReset={() => { }}
+                />
+              </StepTransition>
+            )}
 
-          {currentStep === 'preview' && (
-            <StepTransition key="step4">
-              <ReportPreview 
-                data={data} 
-                onBack={() => setCurrentStep('data-entry')}
-                onReset={handleReset}
-              />
-            </StepTransition>
-          )}
+            {currentStep === 'data-entry' && (
+              <StepTransition key="step3">
+                <DataEntry
+                  data={data}
+                  onUpdate={updateData}
+                  onNext={() => handleNextStep('data-entry', 'preview')}
+                  onBack={() => setCurrentStep('company-info')}
+                />
+              </StepTransition>
+            )}
 
-        </AnimatePresence>
-      </DashboardLayout>
+            {currentStep === 'preview' && (
+              <StepTransition key="step4">
+                <ReportPreview
+                  data={data}
+                  onBack={() => setCurrentStep('data-entry')}
+                  onReset={handleReset}
+                />
+              </StepTransition>
+            )}
 
-      {/* Modals Layer */}
-      <SaveModal 
-        isOpen={isSaveModalOpen} 
-        onClose={() => setIsSaveModalOpen(false)} 
-        onConfirm={performSave} 
-      />
-      
-      <LoadModal 
-        isOpen={isLoadModalOpen} 
-        onClose={() => setIsLoadModalOpen(false)} 
-        onLoad={performLoad} 
-      />
+          </AnimatePresence>
+        </DashboardLayout>
 
-      <SeederModal 
-        isOpen={isSeederModalOpen}
-        onClose={() => setIsSeederModalOpen(false)}
-        onSelect={performSeeder}
-      />
+        {/* Modals Layer */}
+        <SaveModal
+          isOpen={isSaveModalOpen}
+          onClose={() => setIsSaveModalOpen(false)}
+          onConfirm={performSave}
+        />
 
-      <AlertModal 
-        isOpen={alertConfig.isOpen}
-        type={alertConfig.type}
-        title={alertConfig.title}
-        message={alertConfig.message}
-        confirmText={alertConfig.confirmText}
-        onConfirm={alertConfig.onConfirm}
-        onClose={closeAlert}
-        singleButton={alertConfig.singleButton}
-      />
-    </>
+        <LoadModal
+          isOpen={isLoadModalOpen}
+          onClose={() => setIsLoadModalOpen(false)}
+          onLoad={performLoad}
+        />
+
+        <SeederModal
+          isOpen={isSeederModalOpen}
+          onClose={() => setIsSeederModalOpen(false)}
+          onSelect={performSeeder}
+        />
+
+        <AlertModal
+          isOpen={alertConfig.isOpen}
+          type={alertConfig.type}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          confirmText={alertConfig.confirmText}
+          onConfirm={alertConfig.onConfirm}
+          onClose={closeAlert}
+          singleButton={alertConfig.singleButton}
+        />
+      </>
+    </SubscriptionGuard>
   );
 }
 
